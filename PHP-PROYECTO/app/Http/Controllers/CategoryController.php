@@ -4,12 +4,20 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Carbon\Carbon;
+// IMPORTANTE: Importamos los modelos para poder hablar con la BD
+use App\Models\Categoria; 
+use App\Models\Producto;  
 
 class CategoryController extends Controller
 {
     public function comidaRapida()
     {
-        return view('categoria.comida');
+        // 1. Buscamos la categoría por su nombre exacto en la BD
+        $categoria = Categoria::where('nombre', 'Comida Rápida')->first();
+        // 2. Si existe, traemos sus productos. Si no, enviamos un arreglo vacío
+        $productos = $categoria ? $categoria->productos : [];
+        // 3. Enviamos los productos a la vista
+        return view('categoria.comida', compact('productos'));
     }
 
     public function detallesCompra()
@@ -53,21 +61,33 @@ class CategoryController extends Controller
     
     public function libreria()
     {
-        return view('categoria.libreria');
+        $categoria = Categoria::where('nombre', 'Libros')->first();
+        $productos = $categoria ? $categoria->productos : [];
+        
+        return view('categoria.libreria', compact('productos'));
     }
 
     public function supermercado()
     {
-        return view('categoria.supermercado');
+        $categoria = Categoria::where('nombre', 'Supermercado')->first();
+        $productos = $categoria ? $categoria->productos : [];
+
+        return view('categoria.supermercado', compact('productos'));
     }
 
     public function licores()
     {
-        return view('categoria.licores');
+        $categoria = Categoria::where('nombre', 'Licores')->first();
+        $productos = $categoria ? $categoria->productos : [];
+
+        return view('categoria.licores', compact('productos'));
     }
 
     public function farmacias() 
     {
-        return view('categoria.farmacias');
+        $categoria = Categoria::where('nombre', 'Farmacia')->first();
+        $productos = $categoria ? $categoria->productos : [];
+
+        return view('categoria.farmacias', compact('productos'));
     }
 }

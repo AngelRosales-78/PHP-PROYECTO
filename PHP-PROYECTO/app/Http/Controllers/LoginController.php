@@ -3,37 +3,45 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Hash;
+use App\Models\User; // Usamos tu modelo User para buscar en la tabla 'users'
 
 class LoginController extends Controller
 {
     public function login(Request $request)
     {
-        // 1. Validamos que el usuario envíe los campos requeridos
+        // 1. Validar que vengan los datos del formulario
         $request->validate([
             'email' => 'required|email',
-            'password' => 'required|string',
+            'password' => 'required',
         ]);
 
-        // 2. Buscamos al cliente en la base de datos por su email
-        $cliente = DB::table('clientes')->where('email', $request->email)->first();
+        // 2. BUSCAR EN LA TABLA 'users' (Para ver si es el Administrador)
+        $admin = User::where('email', $request->email)->first();
 
-        // 3. Verificamos si el cliente existe Y si la contraseña es correcta
-        if ($cliente && Hash::check($request->password, $cliente->password)) {
+        // Si existe en 'users' y la contraseña es correcta
+        if ($admin && Hash::check($request->password, $admin->password)) {
             
-            // ¡Éxito! Guardamos al usuario en la sesión de Laravel
-            Session::put('cliente_id', $cliente->id);
-            Session::put('cliente_nombre', $cliente->nombre);
+            // Verificamos si tiene el rol de admin o campo indicador (ej: es_admin == 1 o rol == 'admin')
+            // Nota: Si aún no agregas la columna de rol, puedes quitar esta condición temporalmente 
+            // suponiendo que CUALQUIER usuario en la tabla 'users' es un administrador.
+            if ($admin->rol === 'admin' || $admin->es_admin == 1) {
+                
+                // Guardamos sus datos en la sesión
+                Session::put('admin_id', $admin->id);
+                Session::put('admin_nombre', $admin->name);
 
-            // Redirige a la página principal o panel de usuario (cambia '/' por tu ruta deseada)
-            return redirect('/')->with('success', '¡Bienvenido de vuelta, ' . $cliente->nombre . '!');
+                // ¡REDIRECCIÓN AUTOMÁTICA AL INVENTARIO!
+                return redirect()->route('admin.inventario')->with('success', 'Bienvenido al Panel de Control.');
+            }
         }
 
-        // 4. Si falla, regresamos al login con un mensaje de error
+     
+
+        // Si no coincide en ninguna tabla o las contraseñas están mal
         return back()->withErrors([
-            'email' => 'Las credenciales proporcionadas no coinciden con nuestros registros.',
-        ])->withInput($request->only('email'));
+            'email' => 'Las credenciales proporcionadas no son correctas.',
+        ])->onlyInput('email');
     }
 }

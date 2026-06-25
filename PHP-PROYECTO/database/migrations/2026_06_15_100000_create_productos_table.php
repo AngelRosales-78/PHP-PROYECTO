@@ -9,15 +9,18 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-public function up()
+public function up(): void
 {
     Schema::create('productos', function (Blueprint $table) {
         $table->id();
+        // Relación con la tabla categorías (Reemplaza el string que tenías)
+        $table->foreignId('categoria_id')->constrained('categorias')->onDelete('cascade');
+        
         $table->string('nombre');
-        $table->string('categoria'); // Ej: 'comida_rapida', 'libros', etc.
+        $table->text('descripcion')->nullable(); // ¡Te faltaba esta columna!
         $table->decimal('precio', 8, 2);
-        $table->integer('stock')->default(0); // El stock que controlará los indicadores
-        $table->string('imagen')->nullable(); // Ruta de la imagen del producto
+        $table->integer('stock')->default(0);
+        $table->string('imagen')->nullable();
         $table->timestamps();
     });
 }

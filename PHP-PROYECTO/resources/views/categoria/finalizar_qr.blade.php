@@ -270,7 +270,7 @@
             display: block;
             font-size: 0.8rem;
             color: #666;
-            margin-bottom: 3px;
+            margin-bottom: 30px;
         }
 
         .amount-badge div {
@@ -343,7 +343,29 @@
             <div class="products-list">
                 @foreach($items as $item)
                     <div class="cart-item">
-                        <img src="{{ asset('images/bembos.png') }}" alt="{{ $item['nombre'] }}" class="item-image">
+                        
+                        {{-- PROCESAMIENTO DINÁMICO DE LA IMAGEN EN BLADE --}}
+                        @php
+                            $nombreImagen = $item['imagen'] ?? $item['image'] ?? $item['img'] ?? null;
+                            if ($nombreImagen) {
+                                if (filter_var($nombreImagen, FILTER_VALIDATE_URL) || strpos($nombreImagen, 'data:') === 0) {
+                                    $rutaFinalImagen = $nombreImagen;
+                                } else {
+                                    $rutaFinalImagen = strpos($nombreImagen, 'images/') === 0 ? asset($nombreImagen) : asset('images/' . $nombreImagen);
+                                }
+                            } else {
+                                $rutaFinalImagen = null;
+                            }
+                        @endphp
+
+                        @if($rutaFinalImagen)
+                            <img src="{{ $rutaFinalImagen }}" alt="{{ $item['nombre'] }}" class="item-image">
+                        @else
+                            <div class="item-image" style="background-color: #e5e7eb; display: flex; align-items: center; justify-content: center;">
+                                <i class="fa-solid fa-box" style="color: #9ca3af; font-size: 1.5rem;"></i>
+                            </div>
+                        @endif
+
                         <div class="item-details">
                             <h3 class="item-name">{{ $item['nombre'] }}</h3>
                             <span class="item-qty">Cantidad: {{ $item['cantidad'] }}</span>

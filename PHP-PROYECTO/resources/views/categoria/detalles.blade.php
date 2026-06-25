@@ -654,7 +654,7 @@
 
             <h2 class="section-title" style="margin-bottom: 25px;">Elegir método de pago</h2>
 
-           
+            
 
             <div class="payment-methods">
 
@@ -686,21 +686,21 @@
 
 
 
-<form id="form-procesar-pago" action="{{ route('pedido.procesarQr') }}" method="POST">
+            <form id="form-procesar-pago" action="{{ route('pedido.procesarQr') }}" method="POST">
 
-    @csrf
+                @csrf
 
-    <input type="hidden" id="input-monto-total" name="monto_total" value="0">
+                <input type="hidden" id="input-monto-total" name="monto_total" value="0">
 
-    <input type="hidden" id="input-metodo" name="metodo" value="">
+                <input type="hidden" id="input-metodo" name="metodo" value="">
 
-    <input type="hidden" id="input-items-json" name="carrito" value="">
+                <input type="hidden" id="input-items-json" name="carrito" value="">
 
 
 
-    <button type="submit" id="btn-submit-action" class="btn-pay-forward">Continuar al Pago</button>
+                <button type="submit" id="btn-submit-action" class="btn-pay-forward">Continuar al Pago</button>
 
-</form>
+            </form>
 
 
 
@@ -780,11 +780,49 @@
 
 
 
+                // CORRECCIÓN DE IMAGEN DINÁMICA:
+
+                // Captura el path buscando en las propiedades más comunes de tu carrito
+
+                let pathImagen = item.imagen || item.image || item.img || item.foto;
+
+
+
+                // Si es una ruta relativa local, le concatena la URL base generada por Laravel asset()
+
+                if (pathImagen && !pathImagen.startsWith('http') && !pathImagen.startsWith('data:')) {
+
+                    const baseAsset = "{{ asset('') }}";
+
+                    if (pathImagen.startsWith('images/')) {
+
+                        pathImagen = baseAsset + pathImagen;
+
+                    } else {
+
+                        pathImagen = baseAsset + 'images/' + pathImagen;
+
+                    }
+
+                }
+
+
+
+                // Si el producto no tiene foto asignada, muestra un contenedor gris elegante con un icono cubiertos
+
+                const imgHTML = pathImagen 
+
+                    ? `<img src="${pathImagen}" alt="${item.nombre}" class="item-image">`
+
+                    : `<div class="item-image" style="background-color: #e5e7eb; display: flex; align-items: center; justify-content: center;"><i class="fa-solid fa-utensils" style="color: #9ca3af; font-size: 1.5rem;"></i></div>`;
+
+
+
                 const itemHTML = `
 
                     <div class="cart-item">
 
-                        <img src="{{ asset('images/bembos.png') }}" alt="${item.nombre}" class="item-image">
+                        ${imgHTML}
 
                         <div class="item-details">
 
@@ -805,6 +843,8 @@
                     </div>
 
                 `;
+
+
 
                 contenedor.innerHTML += itemHTML;
 
@@ -852,13 +892,11 @@
 
             metodoSeleccionado = metodo;
 
-           
 
 
             document.querySelectorAll('.payment-option').forEach(opt => opt.classList.remove('active'));
 
             elemento.classList.add('active');
-
 
 
 
@@ -886,9 +924,7 @@
 
 
 
-
         document.getElementById('form-procesar-pago').addEventListener('submit', function(e) {
-
 
             localStorage.removeItem('clickup_cart');
 

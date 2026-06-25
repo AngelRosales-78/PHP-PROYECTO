@@ -6,6 +6,7 @@ use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\LoginController; 
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\PedidoController; 
+use App\Http\Controllers\AdminController;
 
 /*
 |--------------------------------------------------------------------------
@@ -15,8 +16,6 @@ use App\Http\Controllers\PedidoController;
 Route::get('/', function () {
     return view('welcome');
 });
-
-
 
 Route::get('/registro', function () {
     return view('crear-cuenta');
@@ -35,22 +34,25 @@ Route::post('/logout', function() {
     return redirect('/')->with('success', 'Sesión cerrada correctamente.');
 })->name('logout');
 
-
+/*
+|--------------------------------------------------------------------------
+| Categorías y Tienda
+|--------------------------------------------------------------------------
+*/
 Route::get('/categoria/comida-rapida', [CategoryController::class, 'comidaRapida'])->name('categoria.comida');
-
 Route::get('/carrito/detalles', [CategoryController::class, 'detallesCompra'])->name('carrito.detalles');
-
 Route::post('/pedido/procesar-qr', [PedidoController::class, 'mostrarPantallaQr'])->name('pedido.procesarQr');
 Route::get('/categoria/libreria', [CategoryController::class, 'libreria'])->name('categoria.libreria');
-
 Route::get('/categoria/supermercado', [CategoryController::class, 'supermercado'])->name('categoria.supermercado');
-
 Route::get('/categoria/licores', [CategoryController::class, 'licores'])->name('categoria.licores');
-
 Route::get('/categoria/farmacias', [CategoryController::class, 'farmacias'])->name('categoria.farmacias');
-
 Route::post('/pedido/finalizar-guardar', [PedidoController::class, 'guardarPedido'])->name('pedido.guardar');
 
-use App\Http\Controllers\AdminController;
-
+/*
+|--------------------------------------------------------------------------
+| Panel de Administración (ClickUp Admin)
+|--------------------------------------------------------------------------
+*/
 Route::get('/admin/inventario', [AdminController::class, 'dashboardInventario'])->name('admin.inventario');
+// Procesar el formulario y guardar el producto en la BD
+Route::post('/admin/inventario/guardar', [AdminController::class, 'store'])->name('admin.productos.store');

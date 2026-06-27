@@ -41,7 +41,7 @@
             align-items: center;
             padding: 10px 50px;
             box-sizing: border-box;
-            z-index: 10;
+            z-index: 100; /* Incrementado para evitar que otros elementos pasen por encima */
         }
 
         /* Logotipo (icono + texto) */
@@ -106,30 +106,45 @@
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' fill='%23000'%3E%3Cpath d='M50 80L0 0h100z'/%3E%3C/svg%3E");
             background-size: contain;
             background-repeat: no-repeat;
-            margin-top: 20px;
             margin-top: 2px;
+            transition: transform 0.2s ease;
         }
 
-        /* NUEVOS ESTILOS: Mensaje de bienvenida para usuario logueado */
+        /* --- CONTENEDOR DEL DESPLEGABLE (MENU PERFIL) --- */
+        .user-dropdown-container {
+            position: relative;
+            display: inline-block;
+        }
+
+        /* Caja contenedora interactiva */
         .user-welcome-box {
             display: flex;
             align-items: center;
-            gap: 15px;
+            gap: 12px;
             background: rgba(249, 115, 22, 0.1);
             padding: 8px 18px;
             border-radius: 20px;
             border: 1px solid rgba(249, 115, 22, 0.2);
+            cursor: pointer;
+            user-select: none;
+            transition: background-color 0.2s;
+        }
+
+        .user-welcome-box:hover {
+            background: rgba(249, 115, 22, 0.18);
         }
 
         .user-welcome-text {
             font-size: 0.95rem;
             color: var(--dark-grey);
             font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 6px;
         }
 
         .user-welcome-text i {
             color: var(--primary-orange);
-            margin-right: 5px;
         }
 
         .user-welcome-text strong {
@@ -137,16 +152,78 @@
             font-weight: 700;
         }
 
-        .btn-logout-trigger {
-            color: #ef4444;
-            text-decoration: none;
-            font-size: 0.85rem;
-            font-weight: 600;
-            transition: opacity 0.2s;
+        /* Flecha pequeña para indicar interactividad */
+        .welcome-arrow {
+            font-size: 0.75rem;
+            color: var(--dark-grey);
+            transition: transform 0.2s ease;
         }
 
-        .btn-logout-trigger:hover {
-            opacity: 0.8;
+        /* Menu flotante oculto por defecto */
+        .profile-dropdown-menu {
+            position: absolute;
+            top: 115%;
+            right: 0;
+            background-color: #ffffff;
+            min-width: 170px;
+            border-radius: 14px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            border: 1px solid #eeeeee;
+            padding: 6px 0;
+            display: none;
+            z-index: 1000;
+        }
+
+        /* Clase activa controlada con JS */
+        .profile-dropdown-menu.show {
+            display: block;
+        }
+
+        /* Elementos individuales del menú */
+        .dropdown-custom-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 16px;
+            color: #333333;
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: background-color 0.2s;
+            width: 100%;
+            border: none;
+            background: none;
+            text-align: left;
+            cursor: pointer;
+            box-sizing: border-box;
+        }
+
+        .dropdown-custom-item:hover {
+            background-color: #f5f5f5;
+        }
+
+        .dropdown-custom-item i {
+            color: #555555;
+            width: 14px;
+        }
+
+        .dropdown-custom-divider {
+            border: 0;
+            border-top: 1px solid #eeeeee;
+            margin: 6px 0;
+        }
+
+        /* Modificador para el diseño de salida */
+        .dropdown-custom-item.logout-color {
+            color: #ef4444;
+        }
+
+        .dropdown-custom-item.logout-color:hover {
+            background-color: #fef2f2;
+        }
+
+        .dropdown-custom-item.logout-color i {
+            color: #ef4444;
         }
 
         /* --- Sección Principal (Hero) --- */
@@ -238,7 +315,7 @@
             width: auto;
         }
 
-        /* --- Sección de Categorías y Contenedor General Inferior --- */
+        /* --- Sección de Categorías e Inferior --- */
         .categories-section {
             padding: 80px 20px;
             text-align: center;
@@ -246,7 +323,7 @@
             position: relative;
             width: 100%; 
             box-sizing: border-box; 
-            overflow: hidden; /* Evita scrolls laterales raros */
+            overflow: hidden;
         }
 
         .categories-section h2 {
@@ -293,7 +370,6 @@
             box-shadow: 0 10px 20px rgba(0,0,0,0.15);
         }
 
-        /* La imagen de tu producto dentro del cuadro */
         .category-card img {
             width: 240px; 
             height: auto;
@@ -304,14 +380,13 @@
             z-index: 2;
         }
 
-        /* Colores exactos para cada cuadro */
+        /* Colores exactos de cuadros */
         .bg-orange { background-color: #ff6b00; }
         .bg-yellow { background-color: #ffcd56; }
         .bg-cyan   { background-color: #4bc0c0; }
         .bg-green  { background-color: #63d68a; }
         .bg-pink   { background-color: #eb7c94; }
 
-        /* Botón naranja de búsqueda */
         .search-btn {
             display: inline-block;
             background-color: var(--primary-orange);
@@ -338,24 +413,20 @@
             margin-bottom: 40px;
         }
 
-        /* --- MODIFICACIÓN DEL VECTOR 3: Tamaño corregido y estilizado --- */
         .left-shape {
             position: absolute;
             top: 0;
             left: 0;
-            width: 102vw;       /* Reducido para que sea más sutil y no invada las tarjetas */
-            height: 100%;      /* Acompaña el largo completo de toda la sección */
-            
+            width: 102vw;
+            height: 100%;
             background-image: url("{{ asset('images/Vector_3.svg') }}"); 
-            
-            /* Impide que se deforme verticalmente, escalando de forma fluida */
             background-size: 100% auto; 
             background-position: left top; 
             background-repeat: no-repeat;
             z-index: 0; 
         }
 
-        /* --- NUEVOS ESTILOS: Grilla de Características Destacadas --- */
+        /* --- Grilla de Características Destacadas --- */
         .features-grid {
             display: flex;
             flex-wrap: wrap;
@@ -367,7 +438,6 @@
             z-index: 2;
         }
 
-        /* Tarjeta cuadrada con bordes muy redondeados */
         .feature-card {
             width: 290px;
             height: 290px;
@@ -381,14 +451,12 @@
             text-align: center;
         }
 
-        /* Ajuste de los iconos circulares */
         .feature-card img {
             width: 125px;
             height: auto;
             margin-bottom: 20px;
         }
 
-        /* Texto interno en negro negrita */
         .feature-card p {
             margin: 0;
             font-size: 1.1rem;
@@ -397,12 +465,10 @@
             line-height: 1.3;
         }
 
-        /* Colores pastel exactos de tu imagen de referencia */
         .feat-orange { background-color: #ffebe1; }
         .feat-green  { background-color: #f0fbe3; }
         .feat-blue   { background-color: #e3f5ff; }
 
-        /* Botón inferior "Conoce más" */
         .more-btn {
             display: inline-block;
             background-color: var(--primary-orange);
@@ -414,7 +480,7 @@
             border-radius: 25px;
             transition: background-color 0.3s ease;
             margin-top: 10px;
-            margin-bottom: 40px; /* Margen inferior agregado para separar del footer */
+            margin-bottom: 40px;
             position: relative;
             z-index: 2;
         }
@@ -464,7 +530,7 @@
         .footer-logo img {
             height: 125px;
             width: auto;
-            filter: brightness(0) invert(1); /* Convierte el logo cargado a color blanco puro */
+            filter: brightness(0) invert(1);
         }
 
         .social-title {
@@ -488,6 +554,7 @@
         .social-icon svg {
             width: 22px;
             height: 22px;
+            fill: currentColor;
         }
 
         .social-icon:hover {
@@ -549,16 +616,27 @@
                     <li><a href="#">Afilia tu Negocio</a></li>
                     <li>
                         @if(session()->has('cliente_id'))
-                            <div class="user-welcome-box">
-                                <span class="user-welcome-text">
-                                    <i class="fa-solid fa-circle-user"></i> Hola, <strong>{{ session('cliente_nombre') }}</strong>
-                                </span>
-                                <a href="{{ route('logout') }}" class="btn-logout-trigger" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                                    Salir
-                                </a>
-                                <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
-                                    @csrf
-                                </form>
+                            <div class="user-dropdown-container" id="userDropdownContainer">
+                                <div class="user-welcome-box" id="dropdownTrigger">
+                                    <span class="user-welcome-text">
+                                        <i class="fa-solid fa-circle-user"></i> Hola, <strong>{{ session('cliente_nombre') }}</strong>
+                                    </span>
+                                    <i class="fa-solid fa-chevron-down welcome-arrow"></i>
+                                </div>
+                                
+                                <div class="profile-dropdown-menu" id="dropdownMenu">
+                                    <a href="{{ route('mis.pedidos') }}" class="dropdown-custom-item">
+                                        <i class="fa-solid fa-basket-shopping"></i> Mis Pedidos
+                                    </a>
+                                    <div class="dropdown-custom-divider"></div>
+                                    
+                                    <a href="{{ route('logout') }}" class="dropdown-custom-item logout-color" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                                        <i class="fa-solid fa-right-from-bracket"></i> Cerrar Sesión
+                                    </a>
+                                    <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                                        @csrf
+                                    </form>
+                                </div>
                             </div>
                         @else
                             <a href="{{ route('login') }}" class="profile-link">
@@ -652,16 +730,16 @@
                     <p class="social-title">Siguenos en las redes</p>
                     <div class="social-links">
                         <a href="#" class="social-icon" aria-label="Facebook">
-                            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12c0 4.84 3.44 8.87 8 9.8V15H8v-3h2V9.5C10 7.57 11.57 6 13.5 6H16v3h-2c-.55 0-1 .45-1 1v2h3v3h-3v6.95c4.56-.93 8-4.96 8-9.8z"/></svg>
+                            <svg viewBox="0 0 24 24"><path d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12c0 4.84 3.44 8.87 8 9.8V15H8v-3h2V9.5C10 7.57 11.57 6 13.5 6H16v3h-2c-.55 0-1 .45-1 1v2h3v3h-3v6.95c4.56-.93 8-4.96 8-9.8z"/></svg>
                         </a>
                         <a href="#" class="social-icon" aria-label="Instagram">
-                            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.051.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+                            <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.051.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
                         </a>
                         <a href="#" class="social-icon" aria-label="WhatsApp">
-                            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.514 2.266 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.503-5.729-1.457L0 24zm6.59-4.846c1.6.95 3.188 1.449 4.825 1.451 5.436 0 9.86-4.37 9.864-9.799.002-2.63-1.023-5.101-2.885-6.966a9.9 9.9 0 00-6.978-2.893c-5.441 0-9.865 4.37-9.869 9.8-.001 1.761.467 3.479 1.356 5.013l-.993 3.626 3.73-.974z"/></svg>
+                            <svg viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.514 2.266 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.503-5.729-1.457L0 24zm6.59-4.846c1.6.95 3.188 1.449 4.825 1.451 5.436 0 9.86-4.37 9.864-9.799.002-2.63-1.023-5.101-2.885-6.966a9.9 9.9 0 00-6.978-2.893c-5.441 0-9.865 4.37-9.869 9.8-.001 1.761.467 3.479 1.356 5.013l-.993 3.626 3.73-.974z"/></svg>
                         </a>
                         <a href="#" class="social-icon" aria-label="TikTok">
-                            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.525.02c1.31 0 2.59.26 3.77.75v4.56c-.95-.28-1.94-.43-2.94-.43V13c0 2.21-1.79 4-4 4s-4-1.79-4-4 1.79-4 4-4c.31 0 .62.04.92.11V4.54c-.31-.03-.61-.04-.92-.04-4.41 0-8 3.59-8 8s3.59 8 8 8 8-3.59 8-8V0h-3.77z"/></svg>
+                            <svg viewBox="0 0 24 24"><path d="M12.525.02c1.31 0 2.59.26 3.77.75v4.56c-.95-.28-1.94-.43-2.94-.43V13c0 2.21-1.79 4-4 4s-4-1.79-4-4 1.79-4 4-4c.31 0 .62.04.92.11V4.54c-.31-.03-.61-.04-.92-.04-4.41 0-8 3.59-8 8s3.59 8 8 8 8-3.59 8-8V0h-3.77z"/></svg>
                         </a>
                     </div>
                 </div>
@@ -688,5 +766,36 @@
         </footer>
 
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const trigger = document.getElementById('dropdownTrigger');
+            const menu = document.getElementById('dropdownMenu');
+            const arrow = trigger.querySelector('.welcome-arrow');
+
+            // 1. Abrir y cerrar el menú haciendo clic en el cuadro de bienvenida
+            trigger.addEventListener('click', function(event) {
+                event.stopPropagation(); // Previene el evento global de clic
+                const isOpen = menu.classList.contains('show');
+                
+                if (isOpen) {
+                    menu.classList.remove('show');
+                    arrow.style.transform = 'rotate(0deg)';
+                } else {
+                    menu.classList.add('show');
+                    arrow.style.transform = 'rotate(180deg)';
+                }
+            });
+
+            // 2. Cerrar de forma segura si se hace clic fuera del área del perfil
+            document.addEventListener('click', function(event) {
+                const container = document.getElementById('userDropdownContainer');
+                if (!container.contains(event.target)) {
+                    menu.classList.remove('show');
+                    arrow.style.transform = 'rotate(0deg)';
+                }
+            });
+        });
+    </script>
 </body>
 </html>

@@ -318,17 +318,11 @@
                     <a href="{{ route('admin.inventario') }}"><i class="fa-solid fa-boxes-stacked"></i> Inventario</a>
                 </li>
                 <li class="sidebar-item">
-                    <a href="#"><i class="fa-solid fa-cart-shopping"></i> Pedidos</a>
-                </li>
+    <a href="{{ route('admin.pedidos.index') }}"><i class="fa-solid fa-cart-shopping"></i> Pedidos</a>
+</li>
                 <li class="sidebar-item">
-                    <a href="#"><i class="fa-solid fa-users"></i> Usuarios</a>
-                </li>
-            </ul>
-            <div class="sidebar-section-title">Reportes</div>
-            <ul class="sidebar-menu">
-                <li class="sidebar-item">
-                    <a href="#"><i class="fa-solid fa-chart-line"></i> Ventas</a>
-                </li>
+    <a href="{{ route('admin.usuarios.index') }}"><i class="fa-solid fa-users"></i> Usuarios</a>
+</li>
             </ul>
         </aside>
 

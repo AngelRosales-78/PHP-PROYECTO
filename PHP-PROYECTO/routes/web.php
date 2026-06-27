@@ -8,10 +8,9 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\PedidoController; 
 use App\Http\Controllers\AdminController;
 
+
 /*
-|--------------------------------------------------------------------------
 | Rutas Principales y de Bienvenida
-|--------------------------------------------------------------------------
 */
 Route::get('/', function () {
     return view('welcome');
@@ -35,9 +34,7 @@ Route::post('/logout', function() {
 })->name('logout');
 
 /*
-|--------------------------------------------------------------------------
 | Categorías y Tienda
-|--------------------------------------------------------------------------
 */
 Route::get('/categoria/comida-rapida', [CategoryController::class, 'comidaRapida'])->name('categoria.comida');
 Route::get('/carrito/detalles', [CategoryController::class, 'detallesCompra'])->name('carrito.detalles');
@@ -47,12 +44,15 @@ Route::get('/categoria/supermercado', [CategoryController::class, 'supermercado'
 Route::get('/categoria/licores', [CategoryController::class, 'licores'])->name('categoria.licores');
 Route::get('/categoria/farmacias', [CategoryController::class, 'farmacias'])->name('categoria.farmacias');
 Route::post('/pedido/finalizar-guardar', [PedidoController::class, 'guardarPedido'])->name('pedido.guardar');
-
+Route::get('/mis-pedidos', [PedidoController::class, 'index'])->name('mis.pedidos');
+Route::get('/mis-pedidos/{id}', [PedidoController::class, 'show'])->name('pedidos.show');
+Route::post('/admin/pedidos/{id}/actualizar-estado', [AdminPedidoController::class, 'updateEstado'])->name('admin.pedidos.updateEstado');
 /*
-|--------------------------------------------------------------------------
-| Panel de Administración (ClickUp Admin)
-|--------------------------------------------------------------------------
+| Panel de Administración
 */
 Route::get('/admin/inventario', [AdminController::class, 'dashboardInventario'])->name('admin.inventario');
-// Procesar el formulario y guardar el producto en la BD
 Route::post('/admin/inventario/guardar', [AdminController::class, 'store'])->name('admin.productos.store');
+Route::get('/admin/pedidos', [AdminController::class, 'dashboardPedidos'])->name('admin.pedidos.index');
+Route::post('/admin/pedidos/{id}/actualizar-estado', [AdminController::class, 'updateEstado'])->name('admin.pedidos.updateEstado');
+// RUTA PARA VER LOS USUARIOS EN EL PANEL DE ADMIN
+Route::get('/admin/usuarios', [AdminController::class, 'dashboardUsuarios'])->name('admin.usuarios.index');

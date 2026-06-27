@@ -3,11 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\Models\Producto;
-use App\Models\Categoria; // Importante para listar las categorías en el formulario
+use App\Models\Categoria; 
+use App\Models\Pedido; // Importamos el modelo Pedido
 use Illuminate\Http\Request;
-
+use App\Models\Cliente;
 class AdminController extends Controller
 {
+    /*
+    | Gestión de Inventario
+    */
     public function dashboardInventario()
     {
         // 1. Obtener métricas generales del catálogo
@@ -45,6 +49,11 @@ class AdminController extends Controller
         ));
     }
 
+
+    /*Database*/
+    /*Database*/
+    /*Database*/
+
     public function store(Request $request)
     {
         // Validar los datos ingresados
@@ -77,4 +86,46 @@ class AdminController extends Controller
 
         return redirect()->route('admin.inventario')->with('success', 'Producto agregado con éxito.');
     }
+
+
+    /**
+     * Muestra la lista completa de pedidos para el administrador.
+     */
+    public function dashboardPedidos()
+    {
+        // Obtenemos todos los pedidos de la base de datos ordenados por el más reciente
+        $pedidos = Pedido::orderBy('created_at', 'desc')->get();
+        
+        // Retorna la vista pasándole la colección
+return view('admin.pedidos', compact('pedidos'));    }
+
+    /**
+     * Procesa el cambio de estado mediante el elemento selector dinámico.
+     */
+    public function updateEstado(Request $request, $id)
+    {
+        // Validamos que el estado enviado sea uno de los permitidos por las reglas del negocio
+        $request->validate([
+            'estado' => 'required|in:Pendiente,Procesando,En Camino,Entregado,Cancelado'
+        ]);
+
+        // Buscamos el pedido o lanzamos error si no existe
+        $pedido = Pedido::findOrFail($id);
+        
+        // Modificamos y guardamos el cambio
+        $pedido->estado = $request->input('estado');
+        $pedido->save();
+
+        // Redireccionamos a la pantalla anterior enviando la confirmación de éxito
+        return redirect()->back()->with('success', '¡Estado del pedido #' . $id . ' cambiado correctamente a ' . $pedido->estado . '!');
+    }
+
+public function dashboardUsuarios()
+{
+    $usuarios = \App\Models\User::orderBy('created_at', 'desc')->get();
+    
+    $totalUsuarios = $usuarios->count();
+
+    return view('admin.usuarios', compact('usuarios', 'totalUsuarios'));
+}
 }
